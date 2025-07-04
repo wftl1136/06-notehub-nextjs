@@ -15,7 +15,8 @@ type PageProps = {
 
 export default async function NoteDetailsPage({ params }: PageProps) {
   const queryClient = new QueryClient();
-  const noteId = Number(params.id);
+  const resolvedParams = await params;
+  const noteId = Number(resolvedParams.id);
 
   await queryClient.prefetchQuery({
     queryKey: ['note', noteId],
@@ -24,11 +25,11 @@ export default async function NoteDetailsPage({ params }: PageProps) {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className={styles.container}>
-        <div className={styles.item}>
+    <div className={styles.container}>
+      <div className={styles.item}>
           <NoteDetails noteId={noteId} />
         </div>
       </div>
     </HydrationBoundary>
   );
-}
+} 
