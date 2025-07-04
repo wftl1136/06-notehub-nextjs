@@ -1,23 +1,15 @@
-//Notes\page.tsx
-
-import NotesClient from "./Notes.client";
-import styles from "./NotesPage.module.css";
 import { fetchNotes } from "@/lib/api";
-import type { FetchNotesResponse } from "@/lib/api";
+import NotesClient from "./Notes.client";
+import styles from './NotesPage.module.css';
 
 export default async function NotesPage() {
-  // Завантаження даних на сервері
-  const initialData: FetchNotesResponse = await fetchNotes({
-    page: 1,
-    query: "",
-    perPage: 12,
-  });
-
+  const initialNotes = await fetchNotes(1);
+  
   return (
     <div className={styles.notesPageWrapper}>
       <div className={styles.pageContainer}>
-        <NotesClient initialData={initialData} />
+        <NotesClient initialNotes={initialNotes}/>
       </div>
     </div>
   );
-}
+} 

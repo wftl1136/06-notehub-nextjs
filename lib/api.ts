@@ -1,127 +1,63 @@
-//\lib\api.ts
-
 import axios from "axios";
-import type { AxiosResponse } from "axios";
-import type { Note } from "@/types/note";
+import { Note, CreateNoteRequest } from '@/types/note';
 
-export interface FetchNotesParams {
-  query?: string;
-  page?: number;
-  perPage?: number;
-}
+const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
+const baseURL = "https://notehub-public.goit.study/api";
+
+const api = axios.create({ 
+  baseURL, 
+  headers: { Authorization: `Bearer ${token}` } 
+});
 
 export interface FetchNotesResponse {
   notes: Note[];
-  total: number;
-  page: number;
-  perPage: number;
   totalPages: number;
 }
 
-export type PaginatedNotes = {
-  pages: FetchNotesResponse[];
-};
-
-export interface CreateNoteParams {
-  title: string;
-  content: string;
-  tag: string;
-}
-
-export interface UpdateNoteParams extends CreateNoteParams {
-  id: number;
-}
-
-const API_URL = "https://notehub-public.goit.study/api/notes";
-const TOKEN = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
-
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-    Accept: "application/json",
-  },
-});
-
-export async function fetchNotes({
-  query,
-  page = 1,
-  perPage = 12,
-}: FetchNotesParams): Promise<FetchNotesResponse> {
+export const fetchNotes = async (page: number = 1, query?: string): Promise<FetchNotesResponse> => {
   try {
-    const params: { [key: string]: number | string | undefined } = {
-      page,
-      perPage,
-      sortBy: "created",
+    const params: { page: string; search?: string } = {
+      page: page.toString(),
     };
 
-    if (query && query.trim().length > 0) {
+    if (query) {
       params.search = query;
     }
 
-    const response: AxiosResponse<FetchNotesResponse> = await api.get("", {
-      params,
-    });
+    const response = await api.get<FetchNotesResponse>('/notes', { params });
     return response.data;
   } catch (error) {
-    throw new Error(
-      `API Error: ${error instanceof Error ? error.message : "Unknown Error"}`,
-    );
+    console.error('Error fetching notes:', error);
+    throw error;
+  }
+};
+
+export async function fetchNoteById(id: number): Promise<Note> {
+  try {
+    const response = await api.get<Note>(`/notes/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching note:', error);
+    throw new Error('Failed to fetch note');
   }
 }
 
-export async function createNote(data: CreateNoteParams): Promise<Note> {
+export async function createNote(note: CreateNoteRequest): Promise<Note> {
   try {
-    const response: AxiosResponse<Note> = await api.post("", data, {
-      headers: { "Content-Type": "application/json" },
-    });
+    const response = await api.post<Note>('/notes', note);
     return response.data;
   } catch (error) {
-    throw new Error(
-      `API Error: ${error instanceof Error ? error.message : "Unknown Error"}`,
-    );
-  }
-}
-
-export async function updateNote(data: UpdateNoteParams): Promise<Note> {
-  try {
-    const response: AxiosResponse<Note> = await api.patch(
-      `/${data.id}`,
-      {
-        title: data.title,
-        content: data.content,
-        tag: data.tag,
-      },
-      {
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error(
-      `API Error: ${error instanceof Error ? error.message : "Unknown Error"}`,
-    );
+    console.error('Error creating note:', error);
+    throw new Error('Failed to create note');
   }
 }
 
 export async function deleteNote(id: number): Promise<Note> {
   try {
-    const response: AxiosResponse<Note> = await api.delete(`/${id}`);
+    const response = await api.delete<Note>(`/notes/${id}`);
     return response.data;
   } catch (error) {
-    throw new Error(
-      `API Error: ${error instanceof Error ? error.message : "Unknown Error"}`,
-    );
-  }
-}
-
-export async function fetchNoteById(id: number): Promise<Note> {
-  try {
-    const response: AxiosResponse<Note> = await api.get(`/${id}`);
-    return response.data;
-  } catch (error) {
-    throw new Error(
-      `API Error: ${error instanceof Error ? error.message : "Unknown Error"}`,
-    );
+    console.error('Error deleting note:', error);
+    throw new Error('Failed to delete note');
   }
 }

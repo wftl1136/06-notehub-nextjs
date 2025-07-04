@@ -1,33 +1,38 @@
-//Pagination.tsx
+'use client';
 
-import css from "./Pagination.module.css";
-import ReactPaginate from "react-paginate";
+import ReactPaginate from 'react-paginate';
+import css from './Pagination.module.css';
 
-export interface PaginationProps {
-  pageCount: number; // Загальна кількість сторінок
-  onPageChange: (selectedItem: { selected: number }) => void; // Викликається при зміні сторінки, selectedItem - обрана сторінка
-  currentPage: number; // Поточна сторінка
+interface PaginationProps {
+  totalPages: number;
+  currentPage: number;
+  onPageChange: (page: number) => void;
 }
 
-export default function Pagination({
-  pageCount,
-  onPageChange,
-  currentPage,
-}: PaginationProps) {
-  if (pageCount <= 1) {
-    return null;
-  }
-
+function Pagination({ totalPages, currentPage, onPageChange }: PaginationProps) {
   return (
     <ReactPaginate
-      pageCount={pageCount}
-      onPageChange={onPageChange}
-      forcePage={currentPage}
+      previousLabel={'←'}
+      nextLabel={'→'}
+      breakLabel={'...'}
+      pageCount={totalPages}
+      marginPagesDisplayed={2}
+      pageRangeDisplayed={5}
+      onPageChange={(selectedItem) => onPageChange(selectedItem.selected + 1)}
+      forcePage={currentPage - 1}
       containerClassName={css.pagination}
       activeClassName={css.active}
-      previousLabel="←"
-      nextLabel="→"
-      disableInitialCallback={true}
+      pageClassName={css.pageItem}
+      previousClassName={css.pageItem}
+      nextClassName={css.pageItem}
+      breakClassName={css.pageItem}
+      pageLinkClassName={css.pageLink}
+      previousLinkClassName={css.pageLink}
+      nextLinkClassName={css.pageLink}
+      breakLinkClassName={css.pageLink}
+      disabledClassName={css.disabled}
     />
   );
 }
+
+export default Pagination; 

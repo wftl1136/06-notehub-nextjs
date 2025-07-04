@@ -1,12 +1,9 @@
-//notes\error.tsx
+'use client';
 
-"use client";
-
-import css from "./error.module.css";
-
-type Props = {
+interface ErrorProps {
   error: Error;
-};
-export default function Error({ error }: Props) {
-  return <h1 className={css.error}>{error.message}</h1>;
 }
+
+export default function Error({ error }: ErrorProps) {
+  return <p>Could not fetch the list of notes. {error.message}</p>;
+} 

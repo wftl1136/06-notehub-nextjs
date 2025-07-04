@@ -1,43 +1,67 @@
-//NoteList.tsx
+'use client';
 
-import css from "./NoteList.module.css";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteNote } from "@/lib/api";
-import type { Note } from "@/types/note";
-import Link from "next/link";
+import Link from 'next/link';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { deleteNote } from '@/lib/api';
+import { Note } from '../../types/note';
+import css from './NoteList.module.css';
 
 interface NoteListProps {
   notes: Note[];
 }
 
-export default function NoteList({ notes }: NoteListProps) {
+const getTagClassName = (tag: Note['tag']) => {
+  switch (tag) {
+    case 'Todo':
+      return `${css.tag} ${css.todo}`;
+    case 'Work':
+      return `${css.tag} ${css.work}`;
+    case 'Personal':
+      return `${css.tag} ${css.personal}`;
+    case 'Meeting':
+      return `${css.tag} ${css.meeting}`;
+    case 'Shopping':
+      return `${css.tag} ${css.shopping}`;
+    default:
+  return css.tag;
+  }
+};
+
+function NoteList({ notes }: NoteListProps) {
   const queryClient = useQueryClient();
-  const deleteMutation = useMutation({
-    mutationFn: deleteNote,
+
+  const mutation = useMutation({
+    mutationFn: (id: number) => deleteNote(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
     },
   });
 
   const handleDelete = (id: number) => {
-    deleteMutation.mutate(id);
+    mutation.mutate(id);
   };
 
+  if (!notes.length) {
+    return <p>No notes found.</p>;
+  }
+  
   return (
     <ul className={css.list}>
-      {notes.map((note) => (
-        <li key={note.id} className={css.listItem}>
-          <h2 className={css.title}>{note.title}</h2>{" "}
+      {notes.map(note => (
+        <li className={css.listItem} key={note.id}>
+          <h2 className={css.title}>{note.title}</h2>
           <p className={css.content}>{note.content}</p>
           <div className={css.footer}>
-            <span className={css.tag}>{note.tag}</span>
-            <Link href={`/notes/${note.id}`} className={css.detailsBtn}>
+            <div className={css.meta}>
+            <span className={getTagClassName(note.tag)}>{note.tag}</span>
+            <Link href={`/notes/${note.id}`} className={css.link}>
               View details
             </Link>
-            <button
-              className={css.deleteBtn}
+            </div>
+            <button 
               onClick={() => handleDelete(note.id)}
-              disabled={deleteMutation.isPending}
+              className={css.deleteButton}
+              disabled={mutation.isPending && mutation.variables === note.id}
             >
               Delete
             </button>
@@ -47,3 +71,5 @@ export default function NoteList({ notes }: NoteListProps) {
     </ul>
   );
 }
+
+export default NoteList; 

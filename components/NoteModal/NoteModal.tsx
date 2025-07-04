@@ -1,45 +1,53 @@
-//NoteModal.tsx
-
 "use client";
 
-import css from "./NoteModal.module.css";
-import { useEffect } from "react";
-import { createPortal } from "react-dom";
-import NoteForm from "@/components/NoteForm/NoteForm";
+import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
+import css from './NoteModal.module.css';
+import NoteForm from '../NoteForm/NoteForm';
 
-export interface NoteModalProps {
+interface NoteModalProps {
   onClose: () => void;
 }
 
-export default function NoteModal({ onClose }: NoteModalProps) {
+function NoteModal({ onClose }: NoteModalProps) {
+  const [isClient, setIsClient] = useState(false);
+
   useEffect(() => {
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+    setIsClient(true);
+    document.body.style.overflow = 'hidden';
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
     };
-    document.addEventListener("keydown", handleEscape);
+    window.addEventListener('keydown', handleEsc);
     return () => {
-      document.body.style.overflow = originalOverflow;
-      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleEsc);
     };
   }, [onClose]);
 
-  const handleBackdropClick = (event: React.MouseEvent) => {
-    if (event.target === event.currentTarget) onClose();
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
   };
 
-  return createPortal(
+  if (!isClient) {
+    return null;
+  }
+
+  return ReactDOM.createPortal(
     <div
       className={css.backdrop}
       role="dialog"
       aria-modal="true"
       onClick={handleBackdropClick}
     >
-      <div className={css.modal}>
+      <div className={css.modal} onClick={e => e.stopPropagation()}>
         <NoteForm onClose={onClose} />
       </div>
     </div>,
-    document.body,
+    document.body
   );
 }
+
+export default NoteModal; 
