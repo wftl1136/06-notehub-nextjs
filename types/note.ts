@@ -21,5 +21,5 @@ export interface UpdateNoteRequest {
 
 export interface FetchNotesResponse {
   notes: Note[];
-  total: number;  
+   totalPages: number;  
 }
