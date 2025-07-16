@@ -15,7 +15,7 @@ type PageProps = {
 
 export default async function NotePage({ params }: PageProps) {
   const queryClient = new QueryClient();
-  const noteId = Number(params.id); // ✅ прибрали await — params уже об'єкт
+  const noteId = Number(params.id);
 
   await queryClient.prefetchQuery({
     queryKey: ['note', noteId],
