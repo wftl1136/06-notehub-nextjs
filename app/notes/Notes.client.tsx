@@ -4,46 +4,56 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 import { fetchNotes } from "@/lib/api";
-import type { FetchNotesResponse, Note } from "@/types/note";
+import type { Note } from "@/types/note";
+import SearchBox from "@/components/SearchBox/SearchBox";
+import NoteList from "@/components/NoteList/NoteList";
+import Pagination from "@/components/Pagination/Pagination";
+import NoteModal from "@/components/NoteModal/NoteModal";
 
 interface NotesClientProps {
-  initialData: FetchNotesResponse;
+  initialData: {
+    notes: Note[];
+    totalPages: number;
+  };
 }
 
 export default function NotesClient({ initialData }: NotesClientProps) {
-  const [search, setSearch] = useState<string>("");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+
   const [debouncedSearch] = useDebounce(search, 300);
 
-  // useQuery с явным типом и строгой защитой
-  const { data } = useQuery<FetchNotesResponse>({
-    queryKey: ["notes", debouncedSearch],
+  const { data } = useQuery({
+    queryKey: ["notes", debouncedSearch, page],
     queryFn: () =>
       fetchNotes({
-        page: 1,
+        page,
         query: debouncedSearch,
         perPage: 12,
       }),
     initialData,
+    placeholderData: initialData,
+    keepPreviousData: true,
   });
 
-  // data может быть undefined, notes тоже может отсутствовать — добавляем защиту
-  const notes: Note[] = data?.notes ?? [];
+  const notes = data?.notes ?? [];
+  const totalPages = data?.totalPages ?? 1;
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1); // Скидаємо сторінку при новому запиті
+  };
 
   return (
     <div>
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search notes..."
-      />
-      <ul>
-        {notes.length > 0 ? (
-          notes.map((note) => <li key={note.id}>{note.title}</li>)
-        ) : (
-          <li>No notes found</li>
-        )}
-      </ul>
+      <SearchBox value={search} onChange={handleSearchChange} />
+      <NoteList notes={notes} onNoteClick={(note) => setSelectedNote(note)} />
+      <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+
+      {selectedNote && (
+        <NoteModal note={selectedNote} onClose={() => setSelectedNote(null)} />
+      )}
     </div>
   );
 }
