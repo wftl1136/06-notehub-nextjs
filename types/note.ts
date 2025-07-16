@@ -18,3 +18,4 @@ export interface UpdateNoteRequest {
   content?: string;
   tag?: 'Todo' | 'Work' | 'Personal' | 'Meeting' | 'Shopping';
 }
+

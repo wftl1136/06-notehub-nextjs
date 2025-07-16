@@ -1,22 +1,21 @@
-import styles from "./[id]/NoteDetails.module.css";
+import NotesClient from "./notes/Notes.client";
+import styles from "./NotesPage.module.css";
+import { fetchNotes } from "@/lib/api";
+import type { FetchNotesResponse } from "@/types/note";
 
-export default function Home() {
+export default async function NotesPage() {
+  // Завантаження даних на сервері
+  const initialData: FetchNotesResponse = await fetchNotes({
+    page: 1,
+    query: "",
+    perPage: 12,
+  });
+
   return (
-    <main className={styles.homeWrapper}>
-      <div className={styles.container}>
-        <h1 className={styles.title}>Welcome to NoteHub</h1>
-        <p className={styles.description}>
-          NoteHub is a simple and efficient application designed for managing
-          personal notes. It helps keep your thoughts organized and accessible
-          in one place, whether you&apos;re at home or on the go.
-        </p>
-        <p className={styles.description}>
-          The app provides a clean interface for writing, editing, and browsing
-          notes. With support for keyword search and structured organization,
-          NoteHub offers a streamlined experience for anyone who values clarity
-          and productivity.
-        </p>
+    <div className={styles.notesPageWrapper}>
+      <div className={styles.pageContainer}>
+        <NotesClient initialData={initialData} />
       </div>
-    </main>
+    </div>
   );
 }
