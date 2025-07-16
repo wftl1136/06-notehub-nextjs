@@ -7,17 +7,15 @@ import { fetchNoteById } from '@/lib/api';
 import NoteDetails from './NoteDetails.client';
 import styles from './NoteDetails.module.css';
 
-
 type PageProps = {
   params: {
     id: string;
   };
 };
 
-export default async function NotePage({ params }: PageProps)  {
+export default async function NotePage({ params }: PageProps) {
   const queryClient = new QueryClient();
-  const resolvedParams = await params;
-  const noteId = Number(resolvedParams.id);
+  const noteId = Number(params.id); // ✅ прибрали await — params уже об'єкт
 
   await queryClient.prefetchQuery({
     queryKey: ['note', noteId],
@@ -26,11 +24,11 @@ export default async function NotePage({ params }: PageProps)  {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-    <div className={styles.container}>
-      <div className={styles.item}>
+      <div className={styles.container}>
+        <div className={styles.item}>
           <NoteDetails noteId={noteId} />
         </div>
       </div>
     </HydrationBoundary>
   );
-} 
+}
