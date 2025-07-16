@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.81.5",
+    "@tanstack/react-query": "^5.83.0",
     "@tanstack/react-query-devtools": "^5.80.10",
     "axios": "^1.10.0",
     "formik": "^2.4.6",

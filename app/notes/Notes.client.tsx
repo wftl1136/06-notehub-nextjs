@@ -34,7 +34,7 @@ export default function NotesClient({ initialData }: NotesClientProps) {
       }),
     initialData,
     placeholderData: initialData,
-    keepPreviousData: true,
+    
   });
 
   const notes = data?.notes ?? [];
@@ -52,7 +52,7 @@ export default function NotesClient({ initialData }: NotesClientProps) {
       <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
 
       {selectedNote && (
-        <NoteModal note={selectedNote} onClose={() => setSelectedNote(null)} />
+        <NoteModal onClose={() => setSelectedNote(null)} />
       )}
     </div>
   );
