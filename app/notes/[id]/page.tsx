@@ -7,13 +7,14 @@ import { fetchNoteById } from '@/lib/api';
 import NoteDetails from './NoteDetails.client';
 import styles from './NoteDetails.module.css';
 
+
 type PageProps = {
   params: {
     id: string;
   };
 };
 
-export default async function NoteDetailsPage({ params }: PageProps) {
+export default async function NotePage({ params }: PageProps)  {
   const queryClient = new QueryClient();
   const resolvedParams = await params;
   const noteId = Number(resolvedParams.id);
