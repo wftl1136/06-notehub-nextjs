@@ -1,34 +1,34 @@
-import {
-  HydrationBoundary,
-  QueryClient,
-  dehydrate,
-} from '@tanstack/react-query';
-import { fetchNoteById } from '@/lib/api';
-import NoteDetails from './NoteDetails.client';
-import styles from './NoteDetails.module.css';
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import { fetchNoteById } from "@/lib/api";
+import NoteDetailsClient from "./NoteDetails.client";
 
-type PageProps = {
-  params: {
-    id: string;
-  };
-};
-
-export default async function NotePage({ params }: PageProps) {
+export default async function NoteDetails({
+  params,
+}: {
+  params: { id: string };
+}) {
   const queryClient = new QueryClient();
-  const noteId = Number(params.id);
 
+  // Перевірка та валідація id
+  if (!params?.id) {
+    return <p>Invalid note ID</p>;
+  }
+
+  const id = parseInt(params.id, 10);
+
+  if (isNaN(id)) {
+    return <p>Invalid note ID</p>;
+  }
+
+  // Завантаження нотатки
   await queryClient.prefetchQuery({
-    queryKey: ['note', noteId],
-    queryFn: () => fetchNoteById(noteId),
+    queryKey: ["note", id],
+    queryFn: () => fetchNoteById(id),
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className={styles.container}>
-        <div className={styles.item}>
-          <NoteDetails noteId={noteId} />
-        </div>
-      </div>
+      <NoteDetailsClient noteId={id} />
     </HydrationBoundary>
   );
 }
