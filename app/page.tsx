@@ -1,7 +1,8 @@
 import NotesClient from "./notes/Notes.client";
-import styles from "./NotesPage.module.css";
+
 import { fetchNotes } from "@/lib/api";
 import type { FetchNotesResponse } from "@/types/note";
+import styles from "./notes/[id]/NoteDetails.module.css";
 
 export default async function NotesPage() {
   // Завантаження даних на сервері
