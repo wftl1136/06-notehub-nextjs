@@ -1,4 +1,4 @@
-import styles from './NoteDetails.module.css';
+import styles from './notes/styles/NoteDetails.module.css';
 import { fetchNotes } from "@/lib/api";
 import type { FetchNotesResponse } from "@/types/note";
 import NotesClient from './notes/Notes.client';
