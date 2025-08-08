@@ -8,7 +8,6 @@ import css from './NoteList.module.css';
 
 interface NoteListProps {
   notes: Note[];
-  onNoteClick: (note: Note) => void;
 }
 
 const getTagClassName = (tag: Note['tag']) => {
