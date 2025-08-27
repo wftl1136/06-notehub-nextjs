@@ -1,15 +1,15 @@
-import { fetchNotes } from "@/lib/api";
-import NotesClient from "./Notes.client";
+'use client';
+
+import NotesClient from './Notes.client';
 import styles from './NotesPage.module.css';
 
-export default async function NotesPage() {
-  const initialNotes = await fetchNotes(1);
-  
+export default function NotesPage() {
   return (
     <div className={styles.notesPageWrapper}>
       <div className={styles.pageContainer}>
-        <NotesClient initialNotes={initialNotes}/>
+        
+        <NotesClient initialNotes={{ notes: [], totalPages: 0 }} />
       </div>
     </div>
   );
-} 
+}
