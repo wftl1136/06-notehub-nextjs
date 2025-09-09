@@ -20,14 +20,14 @@ export default async function NoteDetailsPage({ params }: PageProps) {
 
   await queryClient.prefetchQuery({
     queryKey: ['note', noteId],
-    queryFn: () => fetchNoteById(noteId),
+    queryFn: () => fetchNoteById(noteId.toString()),
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
     <div className={styles.container}>
       <div className={styles.item}>
-          <NoteDetails noteId={noteId} />
+          <NoteDetails noteId={noteId.toString()} />
         </div>
       </div>
     </HydrationBoundary>
