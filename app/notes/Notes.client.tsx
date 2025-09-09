@@ -9,6 +9,8 @@ import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
 import styles from './NotesPage.module.css';
+import NoteForm from '@/components/NoteForm/NoteForm';
+
 
 const NoteModal = dynamic(() => import('@/components/NoteModal/NoteModal'), { ssr: false });
 
@@ -78,7 +80,11 @@ function NotesClientContent({ initialNotes }: NotesClientProps) {
         />
       )}
       
-      {isModalOpen && <NoteModal onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && (
+  <NoteModal onClose={() => setIsModalOpen(false)}>
+    <NoteForm onClose={() => setIsModalOpen(false)} />
+  </NoteModal>
+)}
     </div>
   );
 } 

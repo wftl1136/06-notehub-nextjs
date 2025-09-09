@@ -32,7 +32,7 @@ export const fetchNotes = async (page: number = 1, query?: string): Promise<Fetc
   }
 };
 
-export async function fetchNoteById(id: number): Promise<Note> {
+export async function fetchNoteById(id: string): Promise<Note> {
   try {
     const response = await api.get<Note>(`/notes/${id}`);
     return response.data;
@@ -52,7 +52,7 @@ export async function createNote(note: CreateNoteRequest): Promise<Note> {
   }
 }
 
-export async function deleteNote(id: number): Promise<Note> {
+export async function deleteNote(id: string): Promise<Note> {
   try {
     const response = await api.delete<Note>(`/notes/${id}`);
     return response.data;
