@@ -6,7 +6,7 @@ import { Note } from '@/types/note';
 import css from './NoteDetails.module.css';
 
 interface NoteDetailsProps {
-  noteId: number;
+  noteId: string;
 }
 
 export default function NoteDetails({ noteId }: NoteDetailsProps) {
